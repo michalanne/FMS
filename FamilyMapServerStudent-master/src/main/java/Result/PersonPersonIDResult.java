@@ -11,7 +11,24 @@ public class PersonPersonIDResult {
     String motherID;
     String spouseID;
     boolean success;
+    String message;
 
+    public String getAssociatedUsername() {
+        return associatedUsername;
+    }
+
+    public void setFailure(){
+        associatedUsername = null;
+        personID = null;
+        firstName = null;
+        lastName = null;
+        gender = null;
+        fatherID = null;
+        motherID = null;
+        spouseID = null;
+        success = false;
+        message = "Error: not valid";
+    }
 
     public PersonPersonIDResult(String associatedUsername, String personID, String firstName, String lastName, String gender, String fatherID, String motherID, String spouseID, boolean success) {
         this.associatedUsername = associatedUsername;

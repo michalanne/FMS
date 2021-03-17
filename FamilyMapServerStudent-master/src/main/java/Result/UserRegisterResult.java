@@ -14,6 +14,15 @@ public class UserRegisterResult {
 //			//  user’s generated Person object
 //“success”:true		// Boolean identifier
 
+    public boolean getSuccess(){
+        return success;
+    }
+
+    public void nullify(){
+        personID = null;
+        authtoken = null;
+
+    }
 
     public UserRegisterResult(String authtoken, String username, String personID, boolean success, String message) {
         this.authtoken = authtoken;

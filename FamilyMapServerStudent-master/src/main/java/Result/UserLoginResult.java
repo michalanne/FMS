@@ -10,8 +10,15 @@ public class UserLoginResult {
 
     String username;
     String personID;
-    boolean success;
+    public boolean success;
     String authtoken;
+    String message;
+
+    public void nullify(){
+        personID = null;
+        authtoken = null;
+        message = "Error: Login Failed.";
+    }
 
     public UserLoginResult(String username, String personID, boolean success, String authtoken) {
         this.username = username;

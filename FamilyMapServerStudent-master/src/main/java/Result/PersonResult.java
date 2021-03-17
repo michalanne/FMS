@@ -7,13 +7,27 @@ public class PersonResult {
 
     ArrayList<PersonModel> data;
     boolean success;
+    String message;
 
     //"data": [  /* Array of Person objects */  ]
     //“success”:true		// Boolean identifier
 
 
-    public PersonResult(ArrayList<PersonModel> data, boolean success) {
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public PersonResult(ArrayList<PersonModel> data, boolean success, String message) {
         this.data = data;
         this.success = success;
+        this.message = message;
     }
 }

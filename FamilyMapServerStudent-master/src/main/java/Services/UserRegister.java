@@ -42,9 +42,9 @@ public class UserRegister {
             AuthTokenDao authDao = new AuthTokenDao(db.getConnection());
             UserDao ud = new UserDao(db.getConnection());
             PersonDao pd = new PersonDao(db.getConnection());
-            authDao.insert(authModel);
             UserModel user = new UserModel(username, r.getPassword(), r.getEmail(), r.getFirstName(), r.getLastName(), r.getGender(), personID);
             ud.insert(user);
+            authDao.insert(authModel);
             FillRequest fr = new FillRequest(username);
             PersonModel newperp = new PersonModel(personID, r.getUsername(), r.getFirstName(), r.getLastName(), r.getGender(), f.generatePersonID(), f.generatePersonID(), null);
             pd.insert(newperp);

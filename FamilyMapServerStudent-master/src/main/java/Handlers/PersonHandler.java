@@ -4,6 +4,7 @@ import Dao.AuthTokenDao;
 import Dao.DataAccessException;
 import Dao.Database;
 import Model.AuthTokenModel;
+import Dao.AuthTokenDao;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.Headers;
@@ -38,7 +39,12 @@ public class PersonHandler extends HandlerHelper implements HttpHandler {
                         PersonRequest pr = new PersonRequest(authtoken);
                         Person pep = new Person();
                         PersonResult result = pep.familyMembersOf(pr);
-                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                        if(result.isSuccess()) {
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                        }
+                        else {
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                        }
                         writer(result,exchange); //Writes an output stream
                         exchange.getResponseBody().close();
                     }
@@ -51,16 +57,35 @@ public class PersonHandler extends HandlerHelper implements HttpHandler {
                     if (urlList.size() != 2) {
                         throw new IOException("url not the right size");
                     }
-                    String IDtoFind = urlList.get(1);
-                    PersonPersonID pI = new PersonPersonID();
-                    PersonPersonIDRequest pr = new PersonPersonIDRequest(IDtoFind);
-                    PersonPersonIDResult IDresult = pI.findPerson(pr);
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-                    writer(IDresult,exchange); //Writes an output stream
-                    exchange.getResponseBody().close();
+                    if (exchange.getRequestHeaders().containsKey("Authorization")) {
+                        Headers theHeader = exchange.getRequestHeaders();
+                        String authtoken = theHeader.getFirst("Authorization");
+                        String IDtoFind = urlList.get(1);
+                        PersonPersonID pI = new PersonPersonID();
+                        PersonPersonIDRequest pr = new PersonPersonIDRequest(IDtoFind);
+                        PersonPersonIDResult IDresult = pI.findPerson(pr);
+                        db.openConnection();
+                        AuthTokenDao authDao = new AuthTokenDao(db.getConnection());
+                        AuthTokenModel au = authDao.find(authtoken);
+                        db.closeConnection(true);
+                        if (au != null && au.getUser().equals(IDresult.getAssociatedUsername())){
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                        }
+                        else {
+                            IDresult.setFailure(); //fixme
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                        }
+                        writer(IDresult, exchange); //Writes an output stream
+                        exchange.getResponseBody().close();
+                    }
                 }
             }
             } catch (IOException | DataAccessException e) {
+                try {
+                    db.closeConnection(true);
+                } catch (DataAccessException dataAccessException) {
+                    dataAccessException.printStackTrace();
+                }
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_SERVER_ERROR, 0); //saves the error number (500)
                 exchange.getResponseBody().close();
                 e.printStackTrace();

@@ -37,7 +37,13 @@ public class RegisterHandler extends HandlerHelper implements HttpHandler {
                 rr = gson.fromJson(reqData, UserRegisterRequest.class); //reqData was toBeRead
                 UserRegister cs = new UserRegister();
                 UserRegisterResult result = cs.register(rr);
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                if(result.getSuccess()){
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                }
+                else{
+                    result.nullify();
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                }
                 writer(result, exchange); //Writes an output stream
                 exchange.getResponseBody().close();
             }

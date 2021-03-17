@@ -31,7 +31,13 @@ public class LoginHandler extends HandlerHelper implements HttpHandler {
                 lr = gson.fromJson(reqData, UserLoginRequest.class); //reqData was toBeRead
                 UserLogin cs = new UserLogin();
                 UserLoginResult result = cs.login(lr);
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                if(result.success){
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                }
+                else{
+                    result.nullify();
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                }
                 writer(result, exchange); //Writes an output stream
                 exchange.getResponseBody().close();
             }

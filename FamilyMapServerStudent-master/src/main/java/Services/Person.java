@@ -22,6 +22,7 @@ public class Person {
     public PersonResult familyMembersOf(PersonRequest authToken) throws DataAccessException {
         boolean success = false;
         PersonDao person;
+        String message;
         ArrayList<PersonModel> people = new ArrayList<>();
         try {
             Database db = new Database();
@@ -33,11 +34,14 @@ public class Person {
             people = person.findAllWithUser(user);
             db.closeConnection(true);
             success = true;
+            message = "Success: family members found";
         } catch (DataAccessException | SQLException e) {
+            people = null;
             success = false;
+            message = "Error: family members not found";
             e.printStackTrace();
         }
-        PersonResult pr = new PersonResult(people, success);
+        PersonResult pr = new PersonResult(people, success, message);
         return pr;
     }
 
