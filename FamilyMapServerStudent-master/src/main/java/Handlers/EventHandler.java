@@ -2,7 +2,6 @@ package Handlers;
 
 import Dao.AuthTokenDao;
 import Dao.DataAccessException;
-import Dao.Database;
 import Model.AuthTokenModel;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -22,8 +21,6 @@ import java.io.IOException;
 
 public class EventHandler extends HandlerHelper implements HttpHandler {
 
-    Database db = new Database();
-
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
@@ -38,9 +35,16 @@ public class EventHandler extends HandlerHelper implements HttpHandler {
                         EventRequest pr = new EventRequest(authtoken);
                         Event pep = new Event();
                         EventResult result = pep.allEvents(pr);
-                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-                        writer(result,exchange); //Writes an output stream
-                        exchange.getResponseBody().close();
+                        if (result.isSuccess()) {
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                            writer(result, exchange); //Writes an output stream
+                            exchange.getResponseBody().close();
+                        }
+                        else {
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                            writer(result, exchange); //Writes an output stream
+                            exchange.getResponseBody().close();
+                        }
                     }
                     //call Event (returns all familymembers)
                     //Description: Returns ALL family members of the current user. The current user is determined from the provided auth token.
@@ -51,16 +55,26 @@ public class EventHandler extends HandlerHelper implements HttpHandler {
                     if (urlList.size() != 2) {
                         throw new IOException("url not the right size");
                     }
-                    String IDtoFind = urlList.get(1);
-                    EventEventID pI = new EventEventID();
-                    EventEventIDRequest pr = new EventEventIDRequest(IDtoFind);
-                    EventEventIDResult IDresult = pI.specificEvent(pr);
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-                    writer(IDresult,exchange); //Writes an output stream
-                    exchange.getResponseBody().close();
+                    Headers theHeader = exchange.getRequestHeaders();
+                    if (exchange.getRequestHeaders().containsKey("Authorization")) {
+                        String authtoken = theHeader.getFirst("Authorization");
+                        String IDtoFind = urlList.get(1);
+                        EventEventID pI = new EventEventID();
+                        EventEventIDRequest pr = new EventEventIDRequest(IDtoFind, authtoken);
+                        EventEventIDResult IDresult = pI.specificEvent(pr);
+                        if (IDresult.isSuccess()) {
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                            writer(IDresult, exchange); //Writes an output stream
+                            exchange.getResponseBody().close();
+                        } else {
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
+                            writer(IDresult, exchange); //Writes an output stream
+                            exchange.getResponseBody().close();
+                        }
+                    }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | DataAccessException e) {
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_SERVER_ERROR, 0); //saves the error number (500)
             exchange.getResponseBody().close();
             e.printStackTrace();

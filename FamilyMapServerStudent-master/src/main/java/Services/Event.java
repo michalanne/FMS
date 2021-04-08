@@ -17,25 +17,42 @@ public class Event {
     * @return array of all events created
     * @author michal
     */
-    public EventResult allEvents(EventRequest r) {
+    public EventResult allEvents(EventRequest r) throws DataAccessException {
         boolean success = false;
         EventDao event;
-        ArrayList<EventModel> events = new ArrayList<>();
+        ArrayList<EventModel> events = null;
+        Database db = new Database();
+        String message = null;
         try {
-            Database db = new Database();
             db.openConnection();
             AuthTokenDao token = new AuthTokenDao(db.getConnection());
             AuthTokenModel tokenModel = token.find(r.getAuthToken());
-            String user = tokenModel.getUser();
-            event = new EventDao(db.getConnection());
-            events = event.findAllWithUser(user);
-            db.closeConnection(true);
-            success = true;
+            if (tokenModel == null) {
+                success = false;
+                db.closeConnection(true);
+                events = null;
+                message = "Error: authToken not correct";
+            }
+            else {
+                String user = tokenModel.getUser();
+                event = new EventDao(db.getConnection());
+                events = event.findAllWithUser(user);
+                db.closeConnection(true);
+                success = true;
+            }
         } catch (DataAccessException | SQLException e) {
             success = false;
+            events = null;
+            try {
+                db.closeConnection(true);
+            } catch (DataAccessException j ) {
+                j.getMessage();
+                j.printStackTrace();
+            }
             e.printStackTrace();
+            message = "Error: " + e.getMessage();
         }
-        EventResult pr = new EventResult(events, success);
+        EventResult pr = new EventResult(events, success, message);
         return pr;
     }
 

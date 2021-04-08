@@ -99,7 +99,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Register Valid New Model.User Test")
-    public void testValidNewRegister(TestInfo testInfo) {
+    public void testValidNewRegister(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -131,7 +131,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Re-Register Model.User Test")
-    public void testReRegister(TestInfo testInfo) {
+    public void testReRegister(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -164,7 +164,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Login Valid Model.User Test")
-    public void testValidUserLogin(TestInfo testInfo) {
+    public void testValidUserLogin(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -201,7 +201,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Login Invalid Model.User Test")
-    public void testInvalidUserLogin(TestInfo testInfo) {
+    public void testInvalidUserLogin(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -222,7 +222,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Login Invalid Password Test")
-    public void testInvalidPasswordLogin(TestInfo testInfo) {
+    public void testInvalidPasswordLogin(TestInfo testInfo) { //success
         printTestName(testInfo);
         //We create a loginRequest with an incorrect password for sheila
         LoginRequest loginRequest = new LoginRequest(SHEILA.getUsername(), PATRICK.getPassword());
@@ -246,7 +246,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Model.Person Valid Test")
-    public void testValidPerson(TestInfo testInfo) {
+    public void testValidPerson(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -278,7 +278,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Model.Person Wrong Model.User Test")
-    public void testWrongUserPerson(TestInfo testInfo) {
+    public void testWrongUserPerson(TestInfo testInfo) { //success
         printTestName(testInfo);
         //We are calling the load api using the data in "/passoffFiles/LoadData.json" as the request
         load();
@@ -322,7 +322,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Model.Person Bad Auth Token Test")
-    public void testBadAuthTokenPerson(TestInfo testInfo) {
+    public void testBadAuthTokenPerson(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -351,7 +351,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Persons Valid Test")
-    public void testValidPersons(TestInfo testInfo) {
+    public void testValidPersons(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -373,8 +373,8 @@ public class ServerTest {
      * (Partial) All Model.Person
      */
     @Test
-    @DisplayName("Persons Bad Auth Token Test")
-    public void testBadAuthTokenPersons(TestInfo testInfo) {
+    @DisplayName("Persons Bad Auth Token Test") //make sure closing all connections
+    public void testBadAuthTokenPersons(TestInfo testInfo) { //success
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -593,7 +593,7 @@ public class ServerTest {
      */
     @Test
     @DisplayName("Realistic Fill Death Test")
-    public void testRealisticDeathEvents(TestInfo testInfo) {
+    public void testRealisticDeathEvents(TestInfo testInfo) { //i do NOT know what this test is doing :')
         printTestName(testInfo);
         try {
             //We are calling the register api for a user named sheila
@@ -1325,7 +1325,7 @@ public class ServerTest {
         if (generationsLeft > 0) {
             assertNotNull(personMother, relationship + "'s Mother's Model.Person not included in passoffresult");
             assertNotNull(personFather, relationship + "'s Father's Model.Person not included in passoffresult");
-            checkPersonsDeath(eventsResult, personsResult, personFather, relationship + "'s father", generationsLeft - 1);
+            checkPersonsDeath(eventsResult, personsResult, personFather, relationship + "'s father", generationsLeft - 1); //error
             checkPersonsDeath(eventsResult, personsResult, personMother, relationship + "'s mother", generationsLeft - 1);
         }
     }

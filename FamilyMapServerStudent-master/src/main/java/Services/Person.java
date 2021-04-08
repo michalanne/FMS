@@ -22,23 +22,32 @@ public class Person {
     public PersonResult familyMembersOf(PersonRequest authToken) throws DataAccessException {
         boolean success = false;
         PersonDao person;
-        String message;
+        String message = null;
         ArrayList<PersonModel> people = new ArrayList<>();
+        Database db = new Database();
         try {
-            Database db = new Database();
             db.openConnection();
             AuthTokenDao token = new AuthTokenDao(db.getConnection());
             AuthTokenModel tokenModel = token.find(authToken.getAuthToken());
-            String user = tokenModel.getUser();
-            person = new PersonDao(db.getConnection());
-            people = person.findAllWithUser(user);
-            db.closeConnection(true);
-            success = true;
-            message = "Success: family members found";
+            if (tokenModel == null) {
+                people = null;
+                success = false;
+                message = "Error: family members not found";
+                db.closeConnection(true);
+            }
+            else {
+                String user = tokenModel.getUser();
+                person = new PersonDao(db.getConnection());
+                people = person.findAllWithUser(user);
+                db.closeConnection(true);
+                success = true;
+                message = null;
+            }
         } catch (DataAccessException | SQLException e) {
             people = null;
             success = false;
             message = "Error: family members not found";
+            db.closeConnection(true);
             e.printStackTrace();
         }
         PersonResult pr = new PersonResult(people, success, message);

@@ -1,7 +1,9 @@
 package Services;
+import Dao.AuthTokenDao;
 import Dao.DataAccessException;
 import Dao.Database;
 import Dao.EventDao;
+import Model.AuthTokenModel;
 import Model.EventModel;
 import Request.EventEventIDRequest;
 import Result.EventEventIDResult;
@@ -16,41 +18,7 @@ public class EventEventID {
     * @author me
      */
 
-    //       Database db = new Database();
-    //        String associatedUsername;
-    //        String personID;
-    //        String firstName;
-    //        String lastName;
-    //        String gender;
-    //        String fatherID;
-    //        String motherID;
-    //        String spouseID;
-    //        boolean success;
-    //        try {
-    //            db.openConnection();
-    //            PersonDao toReturn = new PersonDao(db.getConnection());
-    //            PersonModel personInfo = toReturn.find(ID.getPersonID());
-    //            associatedUsername = personInfo.getAssociatedUser();
-    //            personID = personInfo.getPersonID();
-    //            firstName = personInfo.getFirstName();
-    //            lastName = personInfo.getLastName();
-    //            gender = personInfo.getGender();
-    //            fatherID = personInfo.getFatherID();
-    //            motherID = personInfo.getMotherID();
-    //            spouseID = personInfo.getSpouseID();
-    //            success = true;
-    //            db.closeConnection(true);
-    //            return new PersonPersonIDResult(associatedUsername, personID, firstName, lastName, gender, fatherID, motherID, spouseID, success);
-    //        } catch (DataAccessException e) {
-    //            try {
-    //                db.closeConnection(true);
-    //            } catch(DataAccessException j) {
-    //                j.printStackTrace();
-    //            }
-    //        }
-    //        return null;
-
-    public EventEventIDResult specificEvent(EventEventIDRequest ID) {
+    public EventEventIDResult specificEvent(EventEventIDRequest ID) throws DataAccessException {
         Database db = new Database();
         String eventID = null;
         String associatedUser = null;
@@ -61,13 +29,20 @@ public class EventEventID {
         String city = null;
         String eventType = null; //not totally sure if this should be a string.....
         int year = -1;
-        String username = null;
         boolean success = false;
+        String message = null;
         try {
             db.openConnection();
             EventDao eventd = new EventDao(db.getConnection());
             EventModel eventInfo = eventd.find(ID.getEventID());
-            associatedUser = eventInfo.getAssociatedUser();
+            AuthTokenDao audao = new AuthTokenDao(db.getConnection());
+            AuthTokenModel auM = audao.find(ID.getAuthToken());
+            associatedUser = eventInfo.getassociatedUsername();
+            if (auM == null || !eventInfo.getassociatedUsername().equals(auM.getUser())) {
+                db.closeConnection(true);
+                message = "Error: event not associated with username";
+                return new EventEventIDResult(null, eventID, personID, latitude, longitude, country, city, eventType, year, success, message);
+            }
             personID = eventInfo.getPersonID();
             eventID = eventInfo.getEventID();
             latitude = eventInfo.getLatitude();
@@ -77,15 +52,18 @@ public class EventEventID {
             eventType = eventInfo.getEventType();
             year = eventInfo.getYear();
             success = true;
+            db.closeConnection(true);
         } catch (DataAccessException e) {
             success = false;
+            db.closeConnection(true);
+            message = "Error: " + e.getMessage();
             try {
                 db.closeConnection(true);
             } catch (DataAccessException j) {
                 j.printStackTrace();
             }
         }
-        return new EventEventIDResult(associatedUser, eventID, personID, latitude, longitude, country, city, eventType, year, success);
+        return new EventEventIDResult(associatedUser, eventID, personID, latitude, longitude, country, city, eventType, year, success, message);
     }
 
 }

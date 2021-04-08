@@ -16,7 +16,16 @@ import java.util.UUID;
 public class Fill {
 
     private Database db = new Database();
+    int peopleAdded = 1;
+    int eventsAdded = 0;
 
+    public int getPeopleAdded() {
+        return peopleAdded;
+    }
+
+    public int getEventsAdded() {
+        return eventsAdded;
+    }
 
     //Populates the server's database with generated data for the specified user name.
     // The required "username" parameter must be a user already registered with the server.
@@ -51,8 +60,12 @@ public class Fill {
     }
 
     public Result.FillResult fillDatabase(Request.FillRequest r, int generations, PersonModel user) {
-        String message;
-        Boolean success;
+        String message = null;
+        Boolean success = false;
+        if (generations < 1) {
+            message = "Error: generations too small (negative number)";
+            return new FillResult(message, success);
+        }
         try {
             db.openConnection();
             PersonDao person = new PersonDao(db.getConnection());//generate data
@@ -64,9 +77,9 @@ public class Fill {
             fillHelp(generations, r.getUsername(), user.getPersonID(), user.getMotherID(), user.getFatherID(), 1970);
             db.closeConnection(true);
             success = true;
-            message = "Fill succeeded.";
+            message = "Successfully added " + peopleAdded + " persons and " + eventsAdded + " events to the database.";
         } catch (DataAccessException e) {
-            message = "Fill failed.";
+            message = "Error:" + e.getMessage();
             success = false;
             e.printStackTrace();
         }
@@ -85,15 +98,31 @@ public class Fill {
             String mothersmotherID = generatePersonID();
             String fathersfatherID = generatePersonID();
             String fathersmotherID = generatePersonID();
-            PersonModel mama = new PersonModel(motherID, username, person.randomFemaleName(), person.randomSurName(), "f", mothersfatherID, mothersmotherID, fatherID);
-            PersonModel dad = new PersonModel(fatherID, username, person.randomMaleName(), person.randomSurName(), "m", fathersfatherID, fathersmotherID, motherID); //create spouse
+            PersonModel mama;
+            PersonModel dad;
+            if (generationsLeft == 1) {
+                mama = new PersonModel(motherID, username, person.randomFemaleName(), person.randomSurName(), "f", null, null, fatherID);
+                dad = new PersonModel(fatherID, username, person.randomMaleName(), person.randomSurName(), "m", null, null, motherID); //create spouse
+            }
+            else {
+                mama = new PersonModel(motherID, username, person.randomFemaleName(), person.randomSurName(), "f", mothersfatherID, mothersmotherID, fatherID);
+                dad = new PersonModel(fatherID, username, person.randomMaleName(), person.randomSurName(), "m", fathersfatherID, fathersmotherID, motherID); //create spouse
+            }
             person.insert(mama);
+            peopleAdded += 1;
             person.insert(dad);
+            peopleAdded += 1;
             EventDao eventCreator = new EventDao(db.getConnection());
-            String birthID = eventCreator.generateBirth(mama.getPersonID(), mama.getuser(), yearOfBirth);
-            eventCreator.generateDeath(mama.getPersonID(), birthID, yearOfBirth + 69, mama.getuser());
-            eventCreator.generateMarriage(mama.getPersonID(), dad.getPersonID(), mama.getuser(), yearOfBirth + 20);
-            eventCreator.generateBirth(dad.getPersonID(), dad.getuser(), yearOfBirth);
+            String momBirthID = eventCreator.generateBirth(motherID, mama.getuser(), yearOfBirth);
+            eventsAdded += 1;
+            eventCreator.generateDeath(motherID, momBirthID, yearOfBirth + 69, mama.getuser());
+            eventsAdded += 1;
+            eventCreator.generateMarriage(motherID, fatherID, mama.getuser(), yearOfBirth + 20);
+            eventsAdded += 2;
+            String dadBirthID = eventCreator.generateBirth(dad.getPersonID(), dad.getuser(), yearOfBirth);
+            eventsAdded += 1;
+            eventCreator.generateDeath(fatherID, dadBirthID, yearOfBirth + 69, dad.getuser());
+            eventsAdded += 1;
             fillHelp(generationsLeft - 1, username, motherID, mothersmotherID, mothersfatherID, yearOfBirth - 40);
             fillHelp(generationsLeft - 1, username, fatherID, fathersmotherID, fathersfatherID, yearOfBirth - 40);
         } catch (DataAccessException | FileNotFoundException e) {

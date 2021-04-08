@@ -14,4 +14,11 @@ public class FillResult {
         this.success = success;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
 }

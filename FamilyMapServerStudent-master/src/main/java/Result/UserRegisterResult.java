@@ -31,4 +31,24 @@ public class UserRegisterResult {
         this.success = success;
         this.message = message;
     }
+
+    public String getAuthtoken() {
+        return authtoken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPersonID() {
+        return personID;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

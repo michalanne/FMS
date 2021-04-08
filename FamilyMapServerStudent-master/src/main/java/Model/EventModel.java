@@ -5,7 +5,7 @@ import java.util.Objects;
 public class EventModel {
 
     String eventID;
-    String associatedUser;
+    String associatedUsername;
     String personID;
     float latitude;
     float longitude;
@@ -19,18 +19,18 @@ public class EventModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventModel event = (EventModel) o;
-        return Float.compare(event.latitude, latitude) == 0 && Float.compare(event.longitude, longitude) == 0 && year == event.year && eventID.equals(event.eventID) && associatedUser.equals(event.associatedUser) && personID.equals(event.personID) && country.equals(event.country) && city.equals(event.city) && eventType.equals(event.eventType);
+        return Float.compare(event.latitude, latitude) == 0 && Float.compare(event.longitude, longitude) == 0 && year == event.year && eventID.equals(event.eventID) && associatedUsername.equals(event.associatedUsername) && personID.equals(event.personID) && country.equals(event.country) && city.equals(event.city) && eventType.equals(event.eventType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(eventID, associatedUser, personID, latitude, longitude, country, city, eventType, year);
+        return Objects.hash(eventID, associatedUsername, personID, latitude, longitude, country, city, eventType, year);
     }
 
-    public EventModel(String eventID, String associatedUser, String personID, float latitude,
+    public EventModel(String eventID, String associatedUsername, String personID, float latitude,
                       float longitude, String country, String city, String eventType, int year) {
         this.eventID = eventID;
-        this.associatedUser = associatedUser;
+        this.associatedUsername = associatedUsername;
         this.personID = personID;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -48,12 +48,12 @@ public class EventModel {
         this.eventID = eventID;
     }
 
-    public String getAssociatedUser() {
-        return associatedUser;
+    public String getassociatedUsername() {
+        return associatedUsername;
     }
 
-    public void setAssociatedUser(String associatedUser) {
-        this.associatedUser = associatedUser;
+    public void setassociatedUsername(String associatedUsername) {
+        this.associatedUsername = associatedUsername;
     }
 
     public String getPersonID() {

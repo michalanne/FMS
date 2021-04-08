@@ -11,7 +11,7 @@ public class UserLoginResult {
     String username;
     String personID;
     public boolean success;
-    String authtoken;
+    String authtoken = null;
     String message;
 
     public void nullify(){
@@ -20,10 +20,31 @@ public class UserLoginResult {
         message = "Error: Login Failed.";
     }
 
-    public UserLoginResult(String username, String personID, boolean success, String authtoken) {
+    public UserLoginResult(String username, String personID, boolean success, String authtoken, String message) {
         this.username = username;
         this.personID = personID;
         this.success = success;
         this.authtoken = authtoken;
+        this.message = message;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPersonID() {
+        return personID;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public String getAuthtoken() {
+        return authtoken;
+    }
+
+    public String getMessage() {
+        return message;
     }
 }

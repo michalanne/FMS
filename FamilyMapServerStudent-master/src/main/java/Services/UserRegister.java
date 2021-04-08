@@ -2,6 +2,7 @@ package Services;
 
 import Dao.*;
 import Model.AuthTokenModel;
+import Model.EventModel;
 import Model.PersonModel;
 import Model.UserModel;
 import Request.FillRequest;
@@ -29,32 +30,47 @@ public class UserRegister {
     public UserRegisterResult register(UserRegisterRequest r) throws DataAccessException {
         boolean success;
         String username = null;
-        String message;
+        String message = null;
         String authtoken = null;
         String personID = null;
         try {
             db.openConnection();
             Fill f = new Fill();
-            personID = f.generatePersonID();
             username = r.getUsername();
+            personID = f.generatePersonID();
             authtoken = f.generatePersonID();
             AuthTokenModel authModel = new AuthTokenModel(authtoken, username);
             AuthTokenDao authDao = new AuthTokenDao(db.getConnection());
             UserDao ud = new UserDao(db.getConnection());
             PersonDao pd = new PersonDao(db.getConnection());
             UserModel user = new UserModel(username, r.getPassword(), r.getEmail(), r.getFirstName(), r.getLastName(), r.getGender(), personID);
-            ud.insert(user);
-            authDao.insert(authModel);
-            FillRequest fr = new FillRequest(username);
-            PersonModel newperp = new PersonModel(personID, r.getUsername(), r.getFirstName(), r.getLastName(), r.getGender(), f.generatePersonID(), f.generatePersonID(), null);
-            pd.insert(newperp);
-            db.closeConnection(true);
-            f.fillDatabase(fr, newperp);
-            success = true;
-            message = "Successful register.";
+            if (ud.findByUsername(username) != null) {
+                success = false;
+                username = null;
+                message = "error: User already exists";
+                authtoken = null;
+                db.closeConnection(true);
+                personID = null;
+            }
+            else {
+                ud.insert(user);
+                FillRequest fr = new FillRequest(username);
+                PersonModel newperp = new PersonModel(personID, r.getUsername(), r.getFirstName(), r.getLastName(), r.getGender(), f.generatePersonID(), f.generatePersonID(), null);
+                pd.insert(newperp);
+                EventDao edao = new EventDao(db.getConnection());
+                edao.generateBirth(personID, username, 2000);
+                authDao.insert(authModel);
+                db.closeConnection(true);
+                f.fillDatabase(fr, newperp);
+                success = true;
+                message = null;
+            }
             //db.closeConnection(true);
         } catch (DataAccessException e) {
             success = false;
+             username = null;
+             authtoken = null;
+             personID = null;
             message = "Error: register messed up   " + e.getMessage();
             db.closeConnection(true);
         }

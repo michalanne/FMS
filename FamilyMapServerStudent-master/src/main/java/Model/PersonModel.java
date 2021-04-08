@@ -5,7 +5,7 @@ import java.util.Objects;
 public class PersonModel {
 
     String personID;
-    String user;
+    String associatedUsername;
     String firstName;
     String lastName;
     String gender;
@@ -18,18 +18,18 @@ public class PersonModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PersonModel that = (PersonModel) o;
-        return personID.equals(that.personID) && user.equals(that.user) && firstName.equals(that.firstName) && lastName.equals(that.lastName) && gender.equals(that.gender) && Objects.equals(fatherID, that.fatherID) && Objects.equals(motherID, that.motherID) && Objects.equals(spouseID, that.spouseID);
+        return personID.equals(that.personID) && associatedUsername.equals(that.associatedUsername) && firstName.equals(that.firstName) && lastName.equals(that.lastName) && gender.equals(that.gender) && Objects.equals(fatherID, that.fatherID) && Objects.equals(motherID, that.motherID) && Objects.equals(spouseID, that.spouseID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personID, user, firstName, lastName, gender, fatherID, motherID, spouseID);
+        return Objects.hash(personID, associatedUsername, firstName, lastName, gender, fatherID, motherID, spouseID);
     }
 
     public PersonModel(String personID, String user, String firstName, String lastName,
                        String gender, String fatherID, String motherID, String spouseID) {
         this.personID = personID;
-        this.user = user;
+        this.associatedUsername = user;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
@@ -47,11 +47,11 @@ public class PersonModel {
     }
 
     public String getuser() {
-        return user;
+        return associatedUsername;
     }
 
     public void setuser(String user) {
-        this.user = user;
+        this.associatedUsername = user;
     }
 
     public String getFirstName() {

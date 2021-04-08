@@ -4,44 +4,47 @@ import Model.EventModel;
 import Model.PersonModel;
 import Model.UserModel;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class LoadRequest {
 
-    public UserModel[] users;
-    public PersonModel[] persons;
-    public EventModel[] events;
+    public ArrayList<UserModel> users;
+    public ArrayList<PersonModel> persons;
+    public ArrayList<EventModel> events;
 
     //“users”: [  /* Array of User objects */ ],
     //	“persons”: [  /* Array of Person objects */  ],
     //	“events”: [  /* Array of Event objects */  ]
 
 
-    public LoadRequest(UserModel[] users, PersonModel[] persons, EventModel[] events) {
+    public LoadRequest(ArrayList<UserModel> users, ArrayList<PersonModel> persons, ArrayList<EventModel> events) {
         this.users = users;
         this.persons = persons;
         this.events = events;
     }
 
-    public UserModel[] getUsers() {
+    public ArrayList<UserModel> getUsers() {
         return users;
     }
 
-    public PersonModel[] getPersons() {
+    public ArrayList<PersonModel> getPersons() {
         return persons;
     }
 
-    public EventModel[] getEvents() {
+    public ArrayList<EventModel> getEvents() {
         return events;
     }
 
     public int numberOfUsers() {
-        return users.length;
+        return users.size();
     }
 
     public int numberOfPeople() {
-        return persons.length;
+        return persons.size();
     }
 
     public int numberOfEvents() {
-        return events.length;
+        return events.size();
     }
 }

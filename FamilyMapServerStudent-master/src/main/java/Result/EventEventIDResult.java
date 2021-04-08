@@ -12,6 +12,7 @@ public class EventEventIDResult {
     String eventType;
     int year;
     boolean success;
+    String message;
 
     //"associatedUsername": "susan"  // Username of user account this event belongs to
     //// (non-empty string)
@@ -27,8 +28,7 @@ public class EventEventIDResult {
     //“success”:true		// Boolean identifier
 
 
-    public EventEventIDResult(String associatedUsername, String eventID, String personID, Float latitude,
-                              Float longitude, String country, String city, String eventType, int year, boolean success) {
+    public EventEventIDResult(String associatedUsername, String eventID, String personID, Float latitude, Float longitude, String country, String city, String eventType, int year, boolean success, String message) {
         this.associatedUsername = associatedUsername;
         this.eventID = eventID;
         this.personID = personID;
@@ -39,5 +39,50 @@ public class EventEventIDResult {
         this.eventType = eventType;
         this.year = year;
         this.success = success;
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getAssociatedUsername() {
+        return associatedUsername;
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public String getPersonID() {
+        return personID;
+    }
+
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public Float getLongitude() {
+        return longitude;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public boolean isSuccess() {
+        return success;
     }
 }

@@ -13,6 +13,10 @@ public class PersonResult {
     //“success”:true		// Boolean identifier
 
 
+    public ArrayList<PersonModel> getData() {
+        return data;
+    }
+
     public boolean isSuccess() {
         return success;
     }

@@ -32,18 +32,18 @@ public class Load {
             //actually start loading stuff
             EventDao addEvents = new EventDao(db.getConnection());
             for (int i = 0; i < request.numberOfEvents(); ++i) {
-                addEvents.insert(request.events[i]);
+                addEvents.insert(request.events.get(i));
             }
             PersonDao addPeople = new PersonDao(db.getConnection());
             for (int i = 0; i < request.numberOfPeople(); ++i) {
-                addPeople.insert(request.persons[i]);
+                addPeople.insert(request.persons.get(i));
             }
             UserDao addUsers = new UserDao(db.getConnection());
             for (int i = 0; i < request.numberOfUsers(); ++i) {
-                addUsers.insert(request.users[i]);
+                addUsers.insert(request.users.get(i));
             }
             success = true;
-            message = "Load successful.";
+            message = "Successfully added " + request.numberOfUsers() + " users, " + request.numberOfPeople() + " persons, and " + request.numberOfEvents() + " events to the database.";
             db.closeConnection(true);
         } catch (DataAccessException r) {
             try {

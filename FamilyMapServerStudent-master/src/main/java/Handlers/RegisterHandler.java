@@ -15,12 +15,6 @@ import java.net.HttpURLConnection;
 public class RegisterHandler extends HandlerHelper implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        //	"username": "susan",		// Non-empty string
-        //	"password": "mysecret",	// Non-empty string
-        //	"email": "susan@gmail.com",	// Non-empty string
-        //	"firstName": "Susan",		// Non-empty string
-        //	"lastName": "Ellis",		// Non-empty string
-        // "gender": "f"			// “f” or “m”
         try {
             if (exchange.getRequestMethod().toLowerCase().equals("post")) {
                 InputStream reqBody = exchange.getRequestBody();
